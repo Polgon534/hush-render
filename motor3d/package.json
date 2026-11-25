@@ -1,0 +1,14 @@
+{
+  "name": "hush-render-satisfy",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@remotion/bundler": "4.0.522",
+    "@remotion/cli": "4.0.522",
+    "@remotion/renderer": "4.0.522",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.522",
+    "typescript": "^5.6.0"
+  }
+}

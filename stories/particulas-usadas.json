@@ -1,0 +1,167 @@
+[
+  {
+    "fecha": "2026-11-15",
+    "slug": "satisfy-2026-11-15-ondas-diana",
+    "forma": "ondas",
+    "patron": "diana",
+    "paleta": "aurora",
+    "escala": "la_menor_penta",
+    "instrumento": "cristal_marimba",
+    "camara": "respira",
+    "plataforma": "perla",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-15-ondas-diana\\satisfy-2026-11-15-ondas-diana.mp4"
+  },
+  {
+    "fecha": "2026-11-18",
+    "slug": "satisfy-2026-11-18-piramide-remolino",
+    "forma": "piramide",
+    "patron": "remolino",
+    "paleta": "lava",
+    "escala": "re_mayor_penta",
+    "instrumento": "xilofono_cristal",
+    "camara": "grua",
+    "plataforma": "blanca",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-18-piramide-remolino\\satisfy-2026-11-18-piramide-remolino.mp4"
+  },
+  {
+    "fecha": "2026-11-19",
+    "slug": "satisfy-2026-11-19-galton-aurora",
+    "mecanismo": "galton",
+    "paleta": "aurora",
+    "escala": "fa_mayor_penta",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-19-galton-aurora\\satisfy-2026-11-19-galton-aurora.mp4"
+  },
+  {
+    "fecha": "2026-11-20",
+    "slug": "satisfy-2026-11-20-pendulos-neon",
+    "mecanismo": "pendulos",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-20-pendulos-neon\\satisfy-2026-11-20-pendulos-neon.mp4",
+    "paleta": "neon",
+    "escala": "re_kurd"
+  },
+  {
+    "fecha": "2026-11-21",
+    "slug": "satisfy-2026-11-21-vasos-crema",
+    "mecanismo": "vasos",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-21-vasos-crema\\satisfy-2026-11-21-vasos-crema.mp4",
+    "paleta": "crema",
+    "escala": "do"
+  },
+  {
+    "fecha": "2026-11-23",
+    "slug": "satisfy-2026-11-23-espiral-atardecer",
+    "mecanismo": "espiral",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-23-espiral-atardecer\\satisfy-2026-11-23-espiral-atardecer.mp4",
+    "paleta": "atardecer",
+    "escala": "fa_lidio"
+  },
+  {
+    "fecha": "2026-11-22",
+    "slug": "satisfy-2026-11-22-galaxia-anillos",
+    "forma": "galaxia",
+    "patron": "anillos",
+    "paleta": "oceano",
+    "escala": "sol_mayor_penta",
+    "instrumento": "campanas",
+    "camara": "acercamiento",
+    "plataforma": "perla",
+    "mecanismo": "rebote",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-22-galaxia-anillos\\satisfy-2026-11-22-galaxia-anillos.mp4"
+  },
+  {
+    "fecha": "2026-11-14",
+    "slug": "satisfy-2026-11-14-mandala-petalos",
+    "forma": "mandala",
+    "patron": "petalos",
+    "paleta": "oro_rosa",
+    "escala": "la_menor_penta",
+    "instrumento": "caja_musica",
+    "camara": "orbita",
+    "plataforma": "blanca_aro",
+    "mecanismo": "rebote",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-14-mandala-petalos\\satisfy-2026-11-14-mandala-petalos.mp4"
+  },
+  {
+    "fecha": "2026-11-23",
+    "slug": "satisfy-2026-11-23-anillos-aurora",
+    "mecanismo": "anillos",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-23-anillos-aurora\\satisfy-2026-11-23-anillos-aurora.mp4",
+    "turno": 1,
+    "estilo2": true,
+    "paleta": "aurora",
+    "melodia": "rey_montana"
+  },
+  {
+    "fecha": "2026-11-23",
+    "slug": "satisfy-2026-11-23-pinzas-arcoiris",
+    "mecanismo": "pinzas",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-23-pinzas-arcoiris\\satisfy-2026-11-23-pinzas-arcoiris.mp4",
+    "turno": 2,
+    "estilo2": true,
+    "paleta": "arcoiris",
+    "escala": "la_menor",
+    "pinzas": 3
+  },
+  {
+    "fecha": "2026-11-24",
+    "slug": "satisfy-2026-11-24-anillos-fuego",
+    "mecanismo": "anillos",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-24-anillos-fuego\\satisfy-2026-11-24-anillos-fuego.mp4",
+    "turno": 2,
+    "estilo2": true,
+    "paleta": "fuego",
+    "melodia": "canon"
+  },
+  {
+    "fecha": "2026-11-24",
+    "slug": "satisfy-2026-11-24-pinzas-caramelo",
+    "mecanismo": "pinzas",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-24-pinzas-caramelo\\satisfy-2026-11-24-pinzas-caramelo.mp4",
+    "turno": 1,
+    "estilo2": true,
+    "paleta": "caramelo",
+    "escala": "mi_menor",
+    "pinzas": 2
+  },
+  {
+    "fecha": "2026-11-24",
+    "slug": "satisfy-2026-11-24-notas-himno-alegria",
+    "mecanismo": "notas",
+    "mp4": "videos-finales/satisfy/satisfy-2026-11-24-notas-himno-alegria/satisfy-2026-11-24-notas-himno-alegria.mp4",
+    "turno": 9,
+    "estilo2": true,
+    "melodia": "himno_alegria",
+    "paleta": "fuego"
+  },
+  {
+    "fecha": "2026-11-25",
+    "slug": "satisfy-2026-11-25-pinzas-arcoiris",
+    "mecanismo": "pinzas",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-25-pinzas-arcoiris\\satisfy-2026-11-25-pinzas-arcoiris.mp4",
+    "turno": 1,
+    "estilo2": true,
+    "paleta": "arcoiris",
+    "escala": "re_menor",
+    "pinzas": 2
+  },
+  {
+    "fecha": "2026-11-25",
+    "slug": "satisfy-2026-11-25-notas-estrellita",
+    "mecanismo": "notas",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-25-notas-estrellita\\satisfy-2026-11-25-notas-estrellita.mp4",
+    "turno": 2,
+    "estilo2": true,
+    "paleta": "neon",
+    "melodia": "estrellita"
+  },
+  {
+    "fecha": "2026-11-24",
+    "slug": "satisfy-2026-11-24-notas-jingle-bells",
+    "mecanismo": "notas",
+    "mp4": "D:\\SHORTS-PROYECTO\\shorts-proyecto\\videos-finales\\satisfy\\satisfy-2026-11-24-notas-jingle-bells\\satisfy-2026-11-24-notas-jingle-bells.mp4",
+    "turno": 3,
+    "estilo2": true,
+    "paleta": "fuego",
+    "melodia": "jingle_bells"
+  }
+]
