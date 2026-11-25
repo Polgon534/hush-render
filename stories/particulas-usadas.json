@@ -163,5 +163,28 @@
     "estilo2": true,
     "paleta": "fuego",
     "melodia": "jingle_bells"
+  },
+  {
+    "fecha": "2026-11-26",
+    "slug": "satisfy-2026-11-26-anillos-hielo",
+    "mecanismo": "anillos",
+    "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/satisfy/satisfy-2026-11-26-anillos-hielo/satisfy-2026-11-26-anillos-hielo.mp4",
+    "turno": 1,
+    "estilo2": true,
+    "paleta": "hielo",
+    "melodia": "estrellita",
+    "fondo": "tinta"
+  },
+  {
+    "fecha": "2026-11-26",
+    "slug": "satisfy-2026-11-26-pinzas-neon",
+    "mecanismo": "pinzas",
+    "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/satisfy/satisfy-2026-11-26-pinzas-neon/satisfy-2026-11-26-pinzas-neon.mp4",
+    "turno": 2,
+    "estilo2": true,
+    "paleta": "neon",
+    "escala": "do_mayor",
+    "pinzas": 2,
+    "fondo": "negro"
   }
 ]
