@@ -1,6 +1,6 @@
 """Vídeos sin voz del día en GitHub Actions (mismo código que el PC de Pol):
   · Hush Satisfy Lab: los 2 Satisfy (pinzas, anillos, notas).
-  · Hush Skin Lab: 1 interactivo (ilusiones: postimagen, troxler, lilac, stroop, encuentra; sin quiz).
+  · 1 vídeo de atención por canal (Skin: ilusiones; Football/History/Satisfy: sigue, cuenta, encuentra). Sin quiz.
 
 Uso:  python ci/satisfy.py [--fecha AAAA-MM-DD]
 Deja en salida/: <slug>.mp4, <slug>.txt (publicación) y los registros (para que nada se repita).
@@ -21,7 +21,7 @@ from shorts import interactivo  # noqa: E402
 from shorts import particulas as PF  # noqa: E402
 from shorts import satisfy2  # noqa: E402
 
-CANALES_INTERACTIVO = ("skin",)        # (Pol 26-11) los quiz no funcionan; las ilusiones de Skin sí
+CANALES_INTERACTIVO = ("skin", "football", "history", "satisfy")   # (Pol 26-11) sin quiz: ilusiones y retos de atención
 
 
 def _copia(carpeta: Path, prefijo: str, sal: Path) -> int:
@@ -53,9 +53,10 @@ def main() -> int:
     sal = ROOT / "salida"
     sal.mkdir(exist_ok=True)
     vf = ROOT / "videos-finales"
-    n = _copia(vf / PF.CANAL, f"satisfy-{F}-*", sal)
+    n = _copia(vf / PF.CANAL, f"satisfy-{F}-*", sal)          # (incluye el reto de Satisfy: satisfy-F-interactivo-…)
     for canal in CANALES_INTERACTIVO:
-        n += _copia(vf / interactivo.CARPETA[canal], f"{canal}-{F}-interactivo-*", sal)
+        if canal != "satisfy":
+            n += _copia(vf / interactivo.CARPETA[canal], f"{canal}-{F}-interactivo-*", sal)
     shutil.copy2(PF.REGISTRO, sal / "particulas-usadas.json")
     if interactivo.REGISTRO.is_file():
         shutil.copy2(interactivo.REGISTRO, sal / "interactivos-usados.json")

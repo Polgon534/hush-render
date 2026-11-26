@@ -36,8 +36,16 @@ COMPOSICION = "Interactivo2D"
 RECORTA_FINAL = False      # (26-11) la ilusión necesita sus segundos tras el último sonido
 SR = PF.SR
 SEG, FPS = 30.0, 30
-MARCAS = {"skin": "Hush Skin Lab", "football": "Hush Football Lab", "history": "Hush History Lab"}
-CARPETA = {"skin": "skin", "football": "football", "history": "history"}
+MARCAS = {"skin": "Hush Skin Lab", "football": "Hush Football Lab", "history": "Hush History Lab", "satisfy": "Hush Satisfy Lab"}
+CARPETA = {"skin": "skin", "football": "football", "history": "history", "satisfy": "satisfy"}
+# (Pol 26-11) sin quiz: retos de atención con la misma psicología que «mira el punto» (orden + promesa + respuesta al final)
+TIPOS_RETO = {"football": ["sigue", "cuenta", "encuentra"], "history": ["sigue", "cuenta", "encuentra"], "satisfy": ["sigue", "cuenta"]}
+OBJ = {"football": dict(objeto="balon", trampa="basket", n1="EL BALÓN", n2="BALONES", trampa_n="balones de baloncesto"),
+       "history": dict(objeto="oro", trampa="plata", n1="LA MONEDA", n2="MONEDAS DE ORO", trampa_n="monedas de plata"),
+       "satisfy": dict(objeto="color", trampa="color2", n1="LA BOLA", n2="BOLAS", trampa_n="bolas del otro color")}
+COLORES_SAT = [("#ff3bd4", "#33e1ff", ["#1a0630", "#05010c"]), ("#ffd23f", "#4dff88", ["#06231a", "#010806"]),
+               ("#ff6b3b", "#7c5cff", ["#200a2e", "#05020a"]), ("#33e1ff", "#ffd23f", ["#071a33", "#01050c"]),
+               ("#4dff88", "#ff3b5c", ["#0a2214", "#020703"])]
 TIPOS_SKIN = ["postimagen", "stroop", "troxler", "encuentra", "lilac"]
 
 TEMAS = {   # (Pol 24-11) temas que enganchen al público joven: récords, curiosidades, leyendas, dinero, momentos míticos
@@ -107,10 +115,26 @@ def disenar(fecha: dt.date, canal: str, overrides: dict | None = None) -> dict:
             d["rondas"] = [dict(base=r1[0], raro=r1[1], cols=8, filas=12, i=rng.randrange(96)),
                            dict(base=r2[0], raro=r2[1], cols=10, filas=15, i=rng.randrange(150))]
     else:
-        d["tipo"] = "quiz"
-        hechos = {x.get("tema") for x in usados}
-        libres = [t for t in TEMAS[canal] if t not in hechos] or TEMAS[canal]
-        d["tema"] = libres[fecha.toordinal() % len(libres)]
+        tipos = TIPOS_RETO[canal]
+        ult = usados[-1]["tipo"] if usados else None
+        o = fecha.toordinal() + {"football": 0, "history": 1, "satisfy": 2}[canal]    # cada canal, un reto distinto el mismo día
+        d["tipo"] = tipos[o % len(tipos)]
+        if d["tipo"] == ult:
+            d["tipo"] = [t for t in tipos if t != ult][o % (len(tipos) - 1)]
+        if canal == "satisfy":
+            c1, c2, fondo = COLORES_SAT[fecha.toordinal() % len(COLORES_SAT)]
+            d.update(col1=c1, col2=c2, colores=fondo)
+        if d["tipo"] == "sigue":
+            d["n_swaps"] = rng.choice([13, 14, 15, 16])
+            d["premio"] = rng.randrange(3)
+        elif d["tipo"] == "cuenta":
+            d["total"] = rng.randint(9, 16)
+            d["trampas"] = rng.randint(7, 12)
+        else:
+            pares = [("O", "Q"), ("8", "B"), ("N", "M"), ("E", "F"), ("6", "9"), ("V", "U"), ("P", "R"), ("C", "G")]
+            r1, r2 = rng.sample(pares, 2)
+            d["rondas"] = [dict(base=r1[0], raro=r1[1], cols=8, filas=12, i=rng.randrange(96)),
+                           dict(base=r2[0], raro=r2[1], cols=10, filas=15, i=rng.randrange(150))]
     for k, v in (overrides or {}).items():
         d[k] = v
     d["slug"] = f"{CARPETA[canal]}-{d['fecha']}-interactivo-{d['tipo']}"
@@ -180,6 +204,73 @@ Responde SOLO JSON: {{"ok": [true/false, ...]}} (una entrada por pregunta, en or
 
 
 # ============================================================ línea de tiempo (la pinta Interactivo2D y suena igual)
+def _obj(d: dict, cual: str) -> str:
+    o = OBJ[d["canal"]][cual]
+    return d["col1"] if o == "color" else d["col2"] if o == "color2" else o
+
+
+W_, H_ = 1080, 1920
+
+
+def _plan_reto(d: dict, pl: dict) -> None:
+    """(Pol 26-11) sigue (trileros) y cuenta (cuántos pasan). Todo se calcula aquí: la respuesta es exacta."""
+    rng = random.Random(d["semilla"])
+    O = OBJ[d["canal"]]
+    if d["canal"] == "satisfy":
+        pl["colores"] = d["colores"]
+    if d["tipo"] == "sigue":
+        pl.update(objeto=_obj(d, "objeto"), premio=d["premio"], inicio=[0, 1, 2],
+                  titulo1="SIGUE", titulo2=O["n1"], pregunta_txt="¿DÓNDE ESTÁ?")
+        slot = [0, 1, 2]                    # slot de cada contenedor
+        t, swaps, n = 3.7, [], d["n_swaps"]
+        for k in range(n):
+            dur = 0.66 - 0.36 * (k / max(1, n - 1)) ** 0.8      # cada vez más rápido
+            sa, sb = rng.sample([0, 1, 2], 2)
+            ca, cb = slot.index(sa), slot.index(sb)
+            swaps.append(dict(t0=round(t, 3), d=round(dur, 3), ca=ca, cb=cb, sa=sa, sb=sb))
+            slot[ca], slot[cb] = sb, sa
+            t += dur + 0.05
+        pl["swaps"] = swaps
+        pl["slot_final"] = slot[d["premio"]]
+        pl["levanta"] = [2.6, 3.5]
+        pl["pregunta"] = [round(t + 0.3, 3), round(t + 5.3, 3)]
+        pl["revela"] = [round(t + 5.3, 3), round(t + 7.0, 3)]
+        pl["segundos"] = round(t + 9.6, 3)
+    else:
+        obj, tra = _obj(d, "objeto"), _obj(d, "trampa")
+        pl.update(objetivo=obj, trampa=tra, total=d["total"], titulo1="¿CUÁNTOS", titulo2=f"{O['n2']} VAS A VER?",
+                  cuenta_txt=f"CUENTA {O['n2']}")
+        T0, T1 = 3.6, 21.0
+        kinds = [obj] * d["total"] + [tra] * d["trampas"]
+        rng.shuffle(kinds)
+        n = len(kinds)
+        objs = []
+        for i, k in enumerate(kinds):       # repartidos en el tiempo; a veces dos a la vez (la trampa)
+            t0 = max(T0, T0 + (T1 - T0 - 2.2) * (i + rng.uniform(-0.35, 0.35)) / n)
+            dur = rng.uniform(1.5, 2.3)
+            lado = rng.choice(["izq", "der", "arr", "aba"])
+            y = rng.uniform(560, 1500)
+            x = rng.uniform(220, 860)
+            if lado == "izq":
+                a, b = (-130, y), (W_ + 130, y + rng.uniform(-260, 260))
+            elif lado == "der":
+                a, b = (W_ + 130, y), (-130, y + rng.uniform(-260, 260))
+            elif lado == "arr":
+                a, b = (x, 380), (x + rng.uniform(-300, 300), H_ + 130)
+            else:
+                a, b = (x, H_ + 130), (x + rng.uniform(-300, 300), 380)
+            objs.append(dict(k=k, t0=round(t0, 3), t1=round(t0 + dur, 3), x0=round(a[0]), y0=round(a[1]),
+                             x1=round(b[0]), y1=round(b[1]), r=rng.choice([62, 70, 78]), curva=round(rng.uniform(-120, 120)),
+                             giro=round(rng.uniform(-6, 6), 2)))
+        pl["objs"] = objs
+        fin = max(o["t1"] for o in objs)
+        pl["juego"] = [T0, round(fin + 0.2, 3)]
+        pl["pregunta"] = [round(fin + 0.3, 3), round(fin + 5.3, 3)]
+        pl["revela"] = round(fin + 5.3, 3)
+        pl["segundos"] = round(fin + 9.0, 3)
+        assert sum(1 for o in objs if o["k"] == obj) == d["total"]
+
+
 def plan(d: dict) -> dict:
     pl = dict(tipo=d["tipo"], canal=d["canal"], segundos=SEG, fps=FPS, marca_canal=d["marca"], semilla=d["semilla"])
     for k in ("figura", "cuenta", "n_manchas", "paleta", "color", "rondas", "tema", "palabras"):
@@ -198,6 +289,8 @@ def plan(d: dict) -> dict:
             t += TQ + TR
         pl["segundos"] = round(t + 2.6, 3)
         pl["outro"] = [round(t, 3), pl["segundos"]]
+    elif d["tipo"] in ("sigue", "cuenta"):
+        _plan_reto(d, pl)
     elif d["tipo"] == "stroop":
         pl["fases"] = [dict(t0=2.6, t1=14.0, nivel=1), dict(t0=14.6, t1=26.0, nivel=2)]
         pl["outro"] = [26.4, SEG]
@@ -224,6 +317,25 @@ def eventos(d: dict, pl: dict) -> list[dict]:
                 ev.append(dict(t=b["t0"] + s, tipo="tic", fuerte=(b["tr"] - b["t0"] - s) < 3))
             ev.append(dict(t=b["tr"], tipo="acierto"))
         ev.append(dict(t=pl["outro"][0], tipo="final"))
+    elif d["tipo"] == "sigue":
+        ev.append(dict(t=0.05, tipo="whoosh"))
+        for s_ in pl["swaps"]:
+            ev.append(dict(t=s_["t0"] + s_["d"] * 0.5, tipo="tic", fuerte=False))
+        a, b = pl["pregunta"]
+        ev.append(dict(t=a, tipo="whoosh"))
+        for k in range(1, int(b - a)):
+            ev.append(dict(t=a + k, tipo="tic", fuerte=(b - a - k) <= 3))
+        ev.append(dict(t=pl["revela"][0], tipo="revela"))
+        ev.append(dict(t=pl["revela"][1] + 1.0, tipo="final"))
+    elif d["tipo"] == "cuenta":
+        ev.append(dict(t=0.05, tipo="whoosh"))
+        for o in pl["objs"]:                # todos suenan igual (objetivo o trampa): el sonido no chiva nada
+            ev.append(dict(t=o["t0"] + 0.2, tipo="whoosh"))
+        a, b = pl["pregunta"]
+        for k in range(1, int(b - a)):
+            ev.append(dict(t=a + k, tipo="tic", fuerte=(b - a - k) <= 3))
+        ev.append(dict(t=pl["revela"], tipo="revela"))
+        ev.append(dict(t=pl["revela"] + 1.4, tipo="final"))
     elif d["tipo"] == "stroop":
         ev.append(dict(t=0.05, tipo="whoosh"))
         for f in pl["fases"]:
@@ -391,6 +503,23 @@ def publicacion(d: dict, pl: dict) -> str:
         tit = rng.choice(["Encuentra la letra DISTINTA en 10 segundos", "Solo los de vista de LINCE encuentran las dos",
                           "¿Encuentras el carácter DISTINTO? 2 rondas"])
         desc = "👀 Dos rondas, 10 segundos cada una. ¿Las has encontrado las dos? Dímelo en comentarios 👇"
+    elif d["tipo"] == "sigue":
+        cosa = {"football": "el BALÓN", "history": "la MONEDA de oro", "satisfy": "la BOLA"}[d["canal"]]
+        tit = rng.choice([f"Sigue {cosa}… ¿dónde está al final?", f"Solo el 10 % sigue {cosa} hasta el final",
+                          f"No apartes la vista: ¿dónde está {cosa}?"])
+        desc = (f"👀 Sigue {cosa.lower()} sin pestañear: cada vez va más rápido.\n"
+                "¿En el 1, el 2 o el 3? Ponlo en comentarios ANTES de ver el final 👇")
+    elif d["tipo"] == "cuenta":
+        cosa = {"football": "BALONES", "history": "MONEDAS DE ORO", "satisfy": "BOLAS"}[d["canal"]]
+        trampa = OBJ[d["canal"]]["trampa_n"]
+        tit = rng.choice([f"¿Cuántos {cosa} cuentas? Casi nadie acierta", f"Cuenta los {cosa}: el número te va a sorprender",
+                          f"Test de atención: ¿cuántos {cosa} pasan?"])
+        desc = (f"👀 Cuenta solo los {cosa.lower()} (no los {trampa}). Algunos pasan a la vez…\n"
+                "¿Cuántos te salen? Pon tu número en comentarios 👇")
+    elif d["tipo"] == "encuentra" and d["canal"] != "skin":
+        tit = rng.choice(["Encuentra la letra DISTINTA en 10 segundos", "Solo los de vista de LINCE encuentran las dos",
+                          "¿Encuentras el carácter DISTINTO? 2 rondas"])
+        desc = "👀 Dos rondas, 10 segundos cada una. ¿Las has encontrado las dos? Dímelo en comentarios 👇"
     else:
         tema = d["tema"]
         tema = tema.split(" (")[0]
@@ -399,8 +528,8 @@ def publicacion(d: dict, pl: dict) -> str:
             tit = "QUIZ: ¿aciertas las 4 preguntas?"
         desc = (f"🧠 Quiz de {tema}: 4 preguntas con cuenta atrás.\n"
                 "¿Cuántas has acertado? Dímelo en comentarios 👇 (datos de Wikipedia)")
-    tags = {"skin": "#cerebro #ilusionoptica #curiosidades #shorts", "football": "#futbol #quiz #football #shorts",
-            "history": "#historia #quiz #curiosidades #shorts"}[d["canal"]]
+    tags = {"skin": "#cerebro #ilusionoptica #curiosidades #shorts", "football": "#futbol #reto #atencion #shorts",
+            "history": "#historia #reto #atencion #shorts", "satisfy": "#satisfying #reto #atencion #shorts"}[d["canal"]]
     return f"{tit}\n\n{desc}\n\n{tags}\n"
 
 

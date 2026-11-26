@@ -223,7 +223,8 @@ function lilac(g: CanvasRenderingContext2D, P: any, t: number) {
 
 // ------------------------------------------------------------------ SKIN · encuentra el distinto
 function encuentra(g: CanvasRenderingContext2D, P: any, t: number) {
-  g.fillStyle = "#0f1220"; g.fillRect(0, 0, W, H); polvo(g, t, "120,170,255");
+  if (P.canal && P.canal !== "skin") { fondoReto(g, P, t); g.fillStyle = "rgba(0,0,0,0.35)"; g.fillRect(0, 0, W, H); }
+  else { g.fillStyle = "#0f1220"; g.fillRect(0, 0, W, H); polvo(g, t, "120,170,255"); }
   const fase = P.fases.find((f: any) => t >= f.t0 && t < f.t1);
   if (t < 2.2) {
     texto(g, "ENCUENTRA", CX, 760, 960, 150, TITULO, "#fff", "400"); texto(g, "EL DISTINTO", CX, 920, 960, 150, TITULO, "#ffd23f", "400");
@@ -371,6 +372,198 @@ function quiz(g: CanvasRenderingContext2D, P: any, t: number) {
 }
 
 // ======================================================================== composición
+
+// ================================================================== RETOS DE ATENCIÓN (Pol 26-11): sigue · cuenta
+// Misma psicología que «mira el punto»: una orden, una promesa y la respuesta SOLO al final. Tema por canal.
+type Tema = { fondo: string; acento: string; acento2: string; claro: boolean };
+const TEMAS_R: Record<string, Tema> = {
+  football: { fondo: "campo", acento: "#ffd23f", acento2: "#ffffff", claro: false },
+  history: { fondo: "piedra", acento: "#f2c14e", acento2: "#ffe7a8", claro: false },
+  satisfy: { fondo: "noche", acento: "#7cf0ff", acento2: "#ff7ad9", claro: false },
+  skin: { fondo: "noche", acento: "#ff5f7e", acento2: "#ffd23f", claro: false },
+};
+function fondoReto(g: CanvasRenderingContext2D, P: any, t: number) {
+  const T = TEMAS_R[P.canal] || TEMAS_R.satisfy;
+  if (T.fondo === "campo") {
+    for (let i = 0; i < 12; i++) { g.fillStyle = i % 2 ? "#2f8f3e" : "#2a8338"; g.fillRect(0, i * H / 12, W, H / 12 + 1); }
+    g.strokeStyle = "rgba(255,255,255,0.35)"; g.lineWidth = 8;
+    g.beginPath(); g.moveTo(0, 1500); g.lineTo(W, 1500); g.stroke();
+    g.beginPath(); g.arc(CX, 1500, 230, Math.PI, 0); g.stroke();
+    const v = g.createRadialGradient(CX, 1000, 300, CX, 1000, 1250); v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(0,0,0,0.55)");
+    g.fillStyle = v; g.fillRect(0, 0, W, H);
+  } else if (T.fondo === "piedra") {
+    const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, "#2a1d14"); gr.addColorStop(0.55, "#3b2a1c"); gr.addColorStop(1, "#1a120c");
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    const r = rnd(7); g.strokeStyle = "rgba(0,0,0,0.25)"; g.lineWidth = 3;      // sillares
+    for (let y = 0; y < H; y += 150) { const off = (y / 150) % 2 ? 0 : 130; for (let x = -off; x < W; x += 260) g.strokeRect(x + 4, y + 4, 252, 142); }
+    for (let i = 0; i < 60; i++) { g.fillStyle = `rgba(255,220,160,${0.02 + r() * 0.04})`; g.fillRect(r() * W, r() * H, 40 + r() * 120, 6 + r() * 20); }
+    g.fillStyle = "rgba(60,40,25,0.9)"; g.fillRect(0, 1230, W, 40);                // repisa de madera
+    const v = g.createRadialGradient(CX, 1000, 250, CX, 1000, 1200); v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(0,0,0,0.7)");
+    g.fillStyle = v; g.fillRect(0, 0, W, H); polvo(g, t, "255,210,140", 30);
+  } else {
+    const c = P.colores || ["#120a2a", "#05030f"];
+    const gr = g.createRadialGradient(CX, 900, 100, CX, 1000, 1300); gr.addColorStop(0, c[0]); gr.addColorStop(1, c[1] || "#000");
+    g.fillStyle = gr; g.fillRect(0, 0, W, H); polvo(g, t, "200,220,255", 36);
+  }
+}
+// --- objetos
+function balon(g: CanvasRenderingContext2D, x: number, y: number, r: number, rot = 0) {
+  g.save(); g.translate(x, y); g.rotate(rot);
+  const gr = g.createRadialGradient(-r * 0.35, -r * 0.35, r * 0.1, 0, 0, r); gr.addColorStop(0, "#ffffff"); gr.addColorStop(1, "#c9ced6");
+  g.fillStyle = gr; g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.fill();
+  g.save(); g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.clip();
+  const pent = (cx: number, cy: number, s: number, a0: number) => { g.beginPath(); for (let k = 0; k < 5; k++) { const a = a0 + k * Math.PI * 2 / 5; g[k ? "lineTo" : "moveTo"](cx + Math.cos(a) * s, cy + Math.sin(a) * s); } g.closePath(); g.fill(); };
+  g.fillStyle = "#16181d"; pent(0, 0, r * 0.36, -Math.PI / 2);
+  for (let k = 0; k < 5; k++) { const a = -Math.PI / 2 + Math.PI / 5 + k * Math.PI * 2 / 5; pent(Math.cos(a) * r * 0.95, Math.sin(a) * r * 0.95, r * 0.3, a + Math.PI); }
+  g.strokeStyle = "rgba(20,20,25,0.55)"; g.lineWidth = Math.max(2, r * 0.04);
+  for (let k = 0; k < 5; k++) { const a = -Math.PI / 2 + k * Math.PI * 2 / 5; g.beginPath(); g.moveTo(Math.cos(a) * r * 0.36, Math.sin(a) * r * 0.36); g.lineTo(Math.cos(a) * r * 0.7, Math.sin(a) * r * 0.7); g.stroke(); }
+  g.restore();
+  g.strokeStyle = "rgba(0,0,0,0.35)"; g.lineWidth = Math.max(2, r * 0.05); g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.stroke();
+  g.restore();
+}
+function basket(g: CanvasRenderingContext2D, x: number, y: number, r: number, rot = 0) {
+  g.save(); g.translate(x, y); g.rotate(rot);
+  const gr = g.createRadialGradient(-r * 0.35, -r * 0.35, r * 0.1, 0, 0, r); gr.addColorStop(0, "#ffa04d"); gr.addColorStop(1, "#c4521a");
+  g.fillStyle = gr; g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = "#2a1308"; g.lineWidth = Math.max(2, r * 0.07);
+  g.beginPath(); g.moveTo(-r, 0); g.lineTo(r, 0); g.stroke(); g.beginPath(); g.moveTo(0, -r); g.lineTo(0, r); g.stroke();
+  g.beginPath(); g.arc(-r * 1.25, 0, r * 0.95, -0.9, 0.9); g.stroke(); g.beginPath(); g.arc(r * 1.25, 0, r * 0.95, Math.PI - 0.9, Math.PI + 0.9); g.stroke();
+  g.restore();
+}
+function moneda(g: CanvasRenderingContext2D, x: number, y: number, r: number, rot = 0, plata = false) {
+  g.save(); g.translate(x, y); g.rotate(rot);
+  const [c0, c1, c2] = plata ? ["#f4f6f8", "#a9b0b8", "#6f767e"] : ["#fff2b0", "#e0a92b", "#8a5a10"];
+  const gr = g.createRadialGradient(-r * 0.4, -r * 0.4, r * 0.1, 0, 0, r); gr.addColorStop(0, c0); gr.addColorStop(0.6, c1); gr.addColorStop(1, c2);
+  g.fillStyle = gr; g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = c2; g.lineWidth = r * 0.09; g.beginPath(); g.arc(0, 0, r * 0.86, 0, Math.PI * 2); g.stroke();
+  g.lineWidth = r * 0.05; for (let k = 0; k < 14; k++) { const a = k * Math.PI / 7; g.beginPath(); g.arc(Math.cos(a) * r * 0.72, Math.sin(a) * r * 0.72, r * 0.07, 0, Math.PI * 2); g.stroke(); }
+  g.fillStyle = c2; g.font = `700 ${r * 0.62}px ${SERIF}`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(plata ? "II" : "IV", 0, r * 0.04);
+  g.restore();
+}
+function bola(g: CanvasRenderingContext2D, x: number, y: number, r: number, col: string) {
+  g.save(); g.shadowColor = col; g.shadowBlur = r * 0.9;
+  const gr = g.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.08, x, y, r); gr.addColorStop(0, "#ffffff"); gr.addColorStop(0.3, col); gr.addColorStop(1, col);
+  g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+  g.shadowBlur = 0; const sh = g.createRadialGradient(x, y, r * 0.55, x, y, r); sh.addColorStop(0, "rgba(0,0,0,0)"); sh.addColorStop(1, "rgba(0,0,0,0.45)");
+  g.fillStyle = sh; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); g.restore();
+}
+function objeto(g: CanvasRenderingContext2D, P: any, cual: string, x: number, y: number, r: number, rot = 0) {
+  if (cual === "balon") balon(g, x, y, r, rot);
+  else if (cual === "basket") basket(g, x, y, r, rot);
+  else if (cual === "oro") moneda(g, x, y, r, rot, false);
+  else if (cual === "plata") moneda(g, x, y, r, rot, true);
+  else bola(g, x, y, r, cual);
+}
+// --- contenedores (tapan el objeto)
+function contenedor(g: CanvasRenderingContext2D, P: any, x: number, y: number, s: number) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  g.fillStyle = "rgba(0,0,0,0.35)"; g.beginPath(); g.ellipse(0, 6, 150, 26, 0, 0, Math.PI * 2); g.fill();   // sombra
+  if (P.canal === "football") {                         // cono de entrenamiento
+    g.fillStyle = "#e85d12"; g.beginPath(); g.moveTo(-135, 0); g.lineTo(135, 0); g.lineTo(150, 14); g.lineTo(-150, 14); g.closePath(); g.fill();
+    const gr = g.createLinearGradient(-110, 0, 110, 0); gr.addColorStop(0, "#c94a0c"); gr.addColorStop(0.45, "#ff8a3d"); gr.addColorStop(1, "#b8430a");
+    g.fillStyle = gr; g.beginPath(); g.moveTo(-110, 0); g.lineTo(-34, -300); g.lineTo(34, -300); g.lineTo(110, 0); g.closePath(); g.fill();
+    g.fillStyle = "rgba(255,255,255,0.92)";
+    for (const [a, b] of [[0.32, 0.42], [0.6, 0.7]]) { const w0 = 110 - 76 * a, w1 = 110 - 76 * b; g.beginPath(); g.moveTo(-w0, -300 * a); g.lineTo(w0, -300 * a); g.lineTo(w1, -300 * b); g.lineTo(-w1, -300 * b); g.closePath(); g.fill(); }
+    g.fillStyle = "#a33a08"; g.beginPath(); g.ellipse(0, -300, 34, 9, 0, 0, Math.PI * 2); g.fill();
+  } else if (P.canal === "history") {                   // cuenco de barro boca abajo, con greca
+    const gr = g.createLinearGradient(-140, 0, 140, 0); gr.addColorStop(0, "#7a3b1c"); gr.addColorStop(0.42, "#c8693a"); gr.addColorStop(1, "#6b3216");
+    g.fillStyle = gr; g.beginPath(); g.moveTo(-140, 0); g.bezierCurveTo(-140, -150, -90, -230, 0, -232); g.bezierCurveTo(90, -230, 140, -150, 140, 0); g.closePath(); g.fill();
+    g.fillStyle = "#5a2a12"; g.fillRect(-142, -16, 284, 16);
+    g.strokeStyle = "#1e0f07"; g.lineWidth = 6; g.beginPath();                       // greca
+    for (let k = -5; k <= 4; k++) { const x0 = k * 26; g.moveTo(x0, -70); g.lineTo(x0, -95); g.lineTo(x0 + 18, -95); g.lineTo(x0 + 18, -80); g.lineTo(x0 + 8, -80); }
+    g.stroke();
+    g.fillStyle = "#3d1c0b"; g.beginPath(); g.ellipse(0, -232, 30, 10, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "rgba(255,230,190,0.16)"; g.beginPath(); g.ellipse(-55, -140, 22, 70, 0.35, 0, Math.PI * 2); g.fill();
+  } else {                                              // campana de acero brillante
+    const gr = g.createLinearGradient(-140, 0, 140, 0); gr.addColorStop(0, "#5b6472"); gr.addColorStop(0.3, "#e9eef5"); gr.addColorStop(0.55, "#9aa4b2"); gr.addColorStop(1, "#3c434e");
+    g.fillStyle = gr; g.beginPath(); g.moveTo(-140, 0); g.bezierCurveTo(-140, -170, -80, -240, 0, -240); g.bezierCurveTo(80, -240, 140, -170, 140, 0); g.closePath(); g.fill();
+    g.fillStyle = "#2a3039"; g.fillRect(-146, -12, 292, 14);
+    g.fillStyle = "#c9d1dc"; g.beginPath(); g.arc(0, -262, 22, 0, Math.PI * 2); g.fill(); g.fillRect(-8, -248, 16, 12);
+    g.fillStyle = "rgba(255,255,255,0.35)"; g.beginPath(); g.ellipse(-62, -150, 16, 66, 0.3, 0, Math.PI * 2); g.fill();
+  }
+  g.restore();
+}
+const SLOTX = [CX - 320, CX, CX + 320], SUELO = 1180;
+function posCont(P: any, c: number, t: number): [number, number, number] {   // x, y, escala del contenedor c
+  let slot = P.inicio[c];
+  for (const s of P.swaps) {
+    if (t < s.t0) break;
+    const mio = s.ca === c ? 0 : s.cb === c ? 1 : -1;
+    if (mio < 0) continue;
+    const de = mio === 0 ? s.sa : s.sb, a = mio === 0 ? s.sb : s.sa;
+    if (t >= s.t0 + s.d) { slot = a; continue; }
+    const u = ease((t - s.t0) / s.d), arco = Math.sin(u * Math.PI);
+    const x = SLOTX[de] + (SLOTX[a] - SLOTX[de]) * u, delante = mio === 0;
+    return [x, SUELO + (delante ? 70 : -70) * arco, 1 + (delante ? 0.08 : -0.08) * arco];
+  }
+  return [SLOTX[slot], SUELO, 1];
+}
+function sigue(g: CanvasRenderingContext2D, P: any, t: number) {
+  fondoReto(g, P, t);
+  const T = TEMAS_R[P.canal] || TEMAS_R.satisfy;
+  const [tA, tB] = P.levanta, [tC, tD] = P.pregunta, [tE, tF] = P.revela;
+  const sube = (tt: number) => (tt < tA ? 1 : tt < tB ? 1 - ease((tt - tA) / (tB - tA)) : tt < tE ? 0 : ease((tt - tE) / 0.5));
+  const alto = 260 * sube(t);
+  // el objeto: visible al principio (bajo su contenedor levantado) y al final (solo bajo el bueno)
+  const [bx] = posCont(P, P.premio, t);
+  if (t < tB + 0.05 || t >= tE) objeto(g, P, P.objeto, bx, SUELO - 62, 62, 0);
+  const orden = [0, 1, 2].map((c) => ({ c, p: posCont(P, c, t) })).sort((a, b) => a.p[1] - b.p[1]);
+  for (const { c, p } of orden) {
+    const lev = t >= tE ? (c === P.premio ? alto : 0) : (t < tB ? alto * (c === P.premio ? 1 : 0.0) : 0);
+    contenedor(g, P, p[0], p[1] - lev, p[2]);
+  }
+  if (t < tA) {
+    texto(g, P.titulo1, CX, 300, 980, 130, TITULO, "#fff", "400"); texto(g, P.titulo2, CX, 440, 980, 130, TITULO, T.acento, "400");
+    texto(g, "No apartes la vista ni un segundo", CX, 560, 940, 50, SANS, "rgba(255,255,255,0.92)", "800");
+  } else if (t < tC) {
+    const v = P.swaps.findIndex((s: any) => t < s.t0 + s.d);
+    pildora(g, CX - 230, 300, 460, 96, 48, "rgba(0,0,0,0.45)");
+    texto(g, v < 0 ? "¡ATENTO!" : `${Math.min(P.swaps.length, v + 1)} / ${P.swaps.length}`, CX, 349, 440, 58, TITULO, "#fff", "400", false);
+    if (P.swaps.length && t > P.swaps[Math.floor(P.swaps.length * 0.6)].t0) texto(g, "MÁS RÁPIDO…", CX, 470, 900, 64, TITULO, T.acento, "400");
+  } else if (t < tE) {
+    texto(g, P.pregunta_txt, CX, 430, 980, 118, TITULO, "#fff", "400");
+    [0, 1, 2].forEach((s) => { pildora(g, SLOTX[s] - 60, SUELO + 70, 120, 120, 60, "rgba(0,0,0,0.55)", T.acento, 6);
+      texto(g, String(s + 1), SLOTX[s], SUELO + 132, 100, 78, TITULO, "#fff", "400", false); });
+    cuenta(g, t, tC, tD, 1640, false, T.acento);
+  } else {
+    const n = P.slot_final + 1;
+    texto(g, `¡EN EL ${n}!`, CX, 430, 980, 150, TITULO, T.acento, "400");
+    confeti(g, t, tE + 0.3, bx, SUELO - 120, [T.acento, T.acento2, "#ff3b5c", "#4dd2ff"], 50, 0.9);
+    if (t > tF) { texto(g, "¿Lo has seguido?", CX, 1560, 960, 84, TITULO, "#fff", "400"); texto(g, "Dímelo en comentarios", CX, 1660, 960, 52, SANS, "rgba(255,255,255,0.9)", "800"); }
+  }
+  marca(g, P.marca_canal);
+}
+function cuentaObj(g: CanvasRenderingContext2D, P: any, t: number) {
+  fondoReto(g, P, t);
+  const T = TEMAS_R[P.canal] || TEMAS_R.satisfy;
+  const [tA, tB] = P.juego, [tC, tD] = P.pregunta, tE = P.revela;
+  for (const o of P.objs) {
+    if (t < o.t0 || t > o.t1) continue;
+    const u = (t - o.t0) / (o.t1 - o.t0);
+    objeto(g, P, o.k, o.x0 + (o.x1 - o.x0) * u, o.y0 + (o.y1 - o.y0) * u + Math.sin(u * Math.PI) * o.curva, o.r, o.giro * u);
+  }
+  if (t < tA) {
+    texto(g, P.titulo1, CX, 400, 980, 120, TITULO, "#fff", "400"); texto(g, P.titulo2, CX, 620, 980, 112, TITULO, T.acento, "400");
+    objeto(g, P, P.objetivo, CX - 110, 940, 80, 0); texto(g, "SÍ", CX - 110, 1080, 200, 60, TITULO, "#4dff88", "400");
+    objeto(g, P, P.trampa, CX + 110, 940, 80, 0); texto(g, "NO", CX + 110, 1080, 200, 60, TITULO, "#ff3b5c", "400");
+    texto(g, "Solo los que se llevan la vista hasta el final aciertan", CX, 1260, 900, 46, SANS, "rgba(255,255,255,0.9)", "800");
+  } else if (t < tB) {
+    pildora(g, CX - 380, 240, 760, 100, 50, "rgba(0,0,0,0.5)");
+    objeto(g, P, P.objetivo, CX - 310, 290, 34, 0);
+    texto(g, P.cuenta_txt, CX + 30, 292, 640, 48, TITULO, "#fff", "400", false);
+  } else if (t < tE) {
+    texto(g, "¿CUÁNTOS", CX, 700, 980, 140, TITULO, "#fff", "400"); texto(g, "HAS CONTADO?", CX, 850, 980, 130, TITULO, T.acento, "400");
+    cuenta(g, t, tC, tD, 1200, false, T.acento);
+  } else {
+    const u = back((t - tE) / 0.5);
+    texto(g, "ERAN", CX, 640, 900, 110, TITULO, "#fff", "400");
+    g.save(); g.translate(CX, 900); g.scale(u, u); texto(g, String(P.total), 0, 0, 600, 300, TITULO, T.acento, "400"); g.restore();
+    confeti(g, t, tE + 0.15, CX, 900, [T.acento, T.acento2, "#4dff88", "#4dd2ff"], 56, 1);
+    if (t > tE + 1.4) { texto(g, "¿Has acertado?", CX, 1260, 960, 86, TITULO, "#fff", "400"); texto(g, "Pon tu número en comentarios", CX, 1370, 960, 52, SANS, "rgba(255,255,255,0.9)", "800"); }
+  }
+  marca(g, P.marca_canal);
+}
+
 const cache: Record<string, any> = {};
 const Lienzo: React.FC<{ plan: any }> = ({ plan }) => {
   void fuentes;
@@ -381,7 +574,7 @@ const Lienzo: React.FC<{ plan: any }> = ({ plan }) => {
     if (!g) return;
     const t = f / (plan.fps || 30);
     g.clearRect(0, 0, W, H);
-    ({ postimagen, troxler, lilac, encuentra, stroop, quiz } as any)[plan.tipo](g, plan, t);
+    ({ postimagen, troxler, lilac, encuentra, stroop, quiz, sigue, cuenta: cuentaObj } as any)[plan.tipo](g, plan, t);
   }, [f, plan]);
   return <canvas ref={ref} width={W} height={H} style={{ width: W, height: H }} />;
 };

@@ -62,7 +62,7 @@ jobs:
         run: |
           F=$(ls salida/*.mp4 | head -1 | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
           gh release delete "satisfy-$F" --yes --cleanup-tag 2>/dev/null || true
-          gh release create "satisfy-$F" salida/* --title "Satisfy $F" --notes "Vídeos sin voz del $F (Satisfy + interactivo de Skin)"
+          gh release create "satisfy-$F" salida/* --title "Satisfy $F" --notes "Vídeos sin voz del $F (2 Satisfy + 1 reto de atención por canal)"
           # las de hace más de 10 días sobran (el PC ya los tiene)
           LIM=$(date -u -d "10 days ago" +%F)
           gh release list --limit 100 --json tagName -q '.[].tagName' | while read t; do
