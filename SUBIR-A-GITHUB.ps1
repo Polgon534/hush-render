@@ -9,17 +9,20 @@ if (-not (Test-Path ".git")) {
     git branch -M main
 }
 git add -A
-git -c user.name="Pol" -c user.email="pol@users.noreply.github.com" commit -q -m "hush-render: Satisfy en GitHub Actions" 2>$null
+git -c user.name="Pol" -c user.email="pol@users.noreply.github.com" commit -q -m "hush-render: actualizacion desde el PC" 2>$null
 $remoto = (git remote) -contains "origin"
 if (-not $remoto) {
-    gh repo view Polgon534/hush-render *> $null
-    if ($LASTEXITCODE -ne 0) {
+    $ErrorActionPreference = "Continue"
+    $existe = $false; try { gh repo view Polgon534/hush-render 2>$null | Out-Null; $existe = ($LASTEXITCODE -eq 0) } catch { }
+    if (-not $existe) {
         gh repo create Polgon534/hush-render --public --source . --remote origin --push
     } else {
         git remote add origin https://github.com/Polgon534/hush-render.git
         git push -u origin main
     }
 } else {
+    $ErrorActionPreference = "Continue"
+    git pull --rebase -q origin main   # GitHub guarda cada noche los registros: primero se traen
     git push -u origin main
 }
 Write-Host "Listo: https://github.com/Polgon534/hush-render" -ForegroundColor Green

@@ -19,7 +19,14 @@ from .config import ROOT
 REPO = "Polgon534/hush-render"
 FLAG = ROOT / "encargos" / "noche" / "satisfy-github.flag"
 REGISTRO = ROOT / "stories" / "particulas-usadas.json"
+REGISTRO_INT = ROOT / "stories" / "interactivos-usados.json"   # (26-11) interactivos de Skin
 DESTINO = ROOT / "videos-finales" / "satisfy"
+
+
+def _destino(slug: str) -> Path:
+    """satisfy-… → videos-finales/satisfy · skin-/football-/history-… → la carpeta de ese canal."""
+    pref = slug.split("-", 1)[0]
+    return ROOT / "videos-finales" / (pref if pref in ("skin", "football", "history") else "satisfy")
 
 
 def activo() -> bool:
@@ -73,7 +80,7 @@ def traer(fecha: dt.date | None = None, log=print) -> int:
         if not nombre.endswith(".mp4"):
             continue
         slug = nombre[:-4]
-        c = DESTINO / slug
+        c = _destino(slug) / slug
         mp4 = c / nombre
         if mp4.is_file() and mp4.stat().st_size > 100_000:
             continue
@@ -85,6 +92,16 @@ def traer(fecha: dt.date | None = None, log=print) -> int:
             (c / "publicacion.txt").write_bytes(_get(assets[f"{slug}.txt"], binario=True))
         nuevos += 1
         log(f"  >> OK (GitHub): {mp4}")
+    if "interactivos-usados.json" in assets:          # registro de interactivos: el de GitHub manda
+        try:
+            ri = json.loads(_get(assets["interactivos-usados.json"], binario=True))
+            for h in ri:
+                s_ = h.get("slug")
+                if s_ and (_destino(s_) / s_ / f"{s_}.mp4").is_file():
+                    h["mp4"] = str(_destino(s_) / s_ / f"{s_}.mp4")
+            REGISTRO_INT.write_text(json.dumps(ri, ensure_ascii=False, indent=1), encoding="utf-8")
+        except Exception as e:  # noqa: BLE001
+            log(f"  ✗  registro de interactivos de GitHub: {e!r}")
     if reg_remoto is not None:                     # el registro de GitHub manda; las rutas apuntan a este PC
         for h in reg_remoto:
             s = h.get("slug")

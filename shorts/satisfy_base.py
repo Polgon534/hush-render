@@ -177,7 +177,7 @@ def preparar(M, d: dict, log=print) -> tuple[dict, list[str]]:
     ev = M.eventos(d, pl)
     # (Pol 25-11) nada de segundos muertos al final: el vídeo acaba ~1,3 s después del último sonido (lo justo para que
     # se apague la reverb), así la gente lo ve hasta el final y no desliza en un plano quieto.
-    if ev:
+    if ev and getattr(M, "RECORTA_FINAL", True):
         corte = round(max(e["t"] for e in ev) + COLA_FINAL, 3)
         if corte < pl["segundos"] - 0.25:
             log(f"  final recortado: {pl['segundos']:.1f} s -> {corte:.1f} s (sin plano quieto)")
