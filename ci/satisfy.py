@@ -61,7 +61,11 @@ def main() -> int:
     if interactivo.REGISTRO.is_file():
         shutil.copy2(interactivo.REGISTRO, sal / "interactivos-usados.json")
     print(f"{n} vídeo(s) en salida/")
-    return 0 if n else 1
+    if n:
+        return 0
+    ya = satisfy2.hecho(fecha, 1) and satisfy2.hecho(fecha, 2)      # ya hecho en otra ejecución: no es un fallo
+    print("Nada nuevo: ya estaba hecho" if ya else "✗ No ha salido ningún vídeo")
+    return 0 if ya else 1
 
 
 if __name__ == "__main__":

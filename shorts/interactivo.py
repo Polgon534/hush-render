@@ -81,6 +81,19 @@ def hecho(fecha: dt.date, canal: str) -> bool:
 
 
 # ============================================================ diseño
+PESOS = ROOT / "stories" / "pesos-retos.json"   # (Pol 26-11) lo ajusta Claude cada noche según las estadísticas
+
+
+def _elige_tipo(rng: random.Random, canal: str, tipos: list[str], ult: str | None) -> str:
+    """Tipo del día: sorteo con pesos (lo que funciona sale más; peso 0 = no sale) y nunca el mismo que ayer."""
+    try:
+        pesos = json.loads(PESOS.read_text(encoding="utf-8")).get(canal, {})
+    except Exception:  # noqa: BLE001
+        pesos = {}
+    cand = [t for t in tipos if t != ult and float(pesos.get(t, 1)) > 0] or [t for t in tipos if t != ult] or tipos
+    return rng.choices(cand, weights=[max(0.05, float(pesos.get(t, 1))) for t in cand])[0]
+
+
 def disenar(fecha: dt.date, canal: str, overrides: dict | None = None) -> dict:
     rng = random.Random(f"interactivo-{canal}-{fecha.isoformat()}")
     usados = [x for x in _registro() if x.get("canal") == canal]
@@ -88,10 +101,7 @@ def disenar(fecha: dt.date, canal: str, overrides: dict | None = None) -> dict:
              marca=MARCAS[canal], escala=rng.choice(["re_menor", "la_menor", "mi_menor", "do_mayor", "sol_mayor"]))
     if canal == "skin":
         ult = usados[-1]["tipo"] if usados else None
-        tipos = [t for t in TIPOS_SKIN if t != ult]
-        d["tipo"] = TIPOS_SKIN[fecha.toordinal() % len(TIPOS_SKIN)]
-        if d["tipo"] == ult:
-            d["tipo"] = tipos[fecha.toordinal() % len(tipos)]
+        d["tipo"] = _elige_tipo(rng, canal, TIPOS_SKIN, ult)
         if d["tipo"] == "postimagen":
             d["figura"] = rng.choice(["corazon", "bandera", "atardecer", "bombilla", "estrella", "arcoiris"])
             d["cuenta"] = 20
@@ -117,10 +127,7 @@ def disenar(fecha: dt.date, canal: str, overrides: dict | None = None) -> dict:
     else:
         tipos = TIPOS_RETO[canal]
         ult = usados[-1]["tipo"] if usados else None
-        o = fecha.toordinal() + {"football": 0, "history": 1, "satisfy": 2}[canal]    # cada canal, un reto distinto el mismo día
-        d["tipo"] = tipos[o % len(tipos)]
-        if d["tipo"] == ult:
-            d["tipo"] = [t for t in tipos if t != ult][o % (len(tipos) - 1)]
+        d["tipo"] = _elige_tipo(rng, canal, tipos, ult)
         if canal == "satisfy":
             c1, c2, fondo = COLORES_SAT[fecha.toordinal() % len(COLORES_SAT)]
             d.update(col1=c1, col2=c2, colores=fondo)

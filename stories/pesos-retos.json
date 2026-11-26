@@ -1,0 +1,7 @@
+{
+  "_nota": "Peso de cada tipo de vídeo sin voz por canal (1 = normal, 2 = el doble de veces, 0 = no se hace). Lo ajusta Claude cada noche según stats/resumen.md.",
+  "skin": {"postimagen": 1.5, "troxler": 1.5, "lilac": 1, "stroop": 1, "encuentra": 1},
+  "football": {"sigue": 1, "cuenta": 1, "encuentra": 1},
+  "history": {"sigue": 1, "cuenta": 1, "encuentra": 1},
+  "satisfy": {"sigue": 1, "cuenta": 1}
+}

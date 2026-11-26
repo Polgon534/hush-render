@@ -60,6 +60,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          if ! ls salida/*.mp4 >/dev/null 2>&1; then echo "Sin vídeos nuevos"; exit 0; fi
           F=$(ls salida/*.mp4 | head -1 | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
           gh release delete "satisfy-$F" --yes --cleanup-tag 2>/dev/null || true
           gh release create "satisfy-$F" salida/* --title "Satisfy $F" --notes "Vídeos sin voz del $F (2 Satisfy + 1 reto de atención por canal)"
