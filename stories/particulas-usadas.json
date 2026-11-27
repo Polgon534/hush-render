@@ -186,5 +186,27 @@
     "escala": "do_mayor",
     "pinzas": 2,
     "fondo": "negro"
+  },
+  {
+    "fecha": "2026-11-27",
+    "slug": "satisfy-2026-11-27-notas-nana-brahms",
+    "mecanismo": "notas",
+    "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/satisfy/satisfy-2026-11-27-notas-nana-brahms/satisfy-2026-11-27-notas-nana-brahms.mp4",
+    "turno": 1,
+    "estilo2": true,
+    "paleta": "dulce",
+    "melodia": "nana_brahms",
+    "fondo": "salvia"
+  },
+  {
+    "fecha": "2026-11-27",
+    "slug": "satisfy-2026-11-27-anillos-lima",
+    "mecanismo": "anillos",
+    "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/satisfy/satisfy-2026-11-27-anillos-lima/satisfy-2026-11-27-anillos-lima.mp4",
+    "turno": 2,
+    "estilo2": true,
+    "paleta": "lima",
+    "melodia": "gymnopedie",
+    "fondo": "tinta"
   }
 ]
