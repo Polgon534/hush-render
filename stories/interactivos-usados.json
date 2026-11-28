@@ -78,5 +78,37 @@
   "tema": null,
   "slug": "satisfy-2026-11-27-interactivo-sigue",
   "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/satisfy/satisfy-2026-11-27-interactivo-sigue/satisfy-2026-11-27-interactivo-sigue.mp4"
+ },
+ {
+  "fecha": "2026-11-28",
+  "canal": "skin",
+  "tipo": "stroop",
+  "tema": null,
+  "slug": "skin-2026-11-28-interactivo-stroop",
+  "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/skin/skin-2026-11-28-interactivo-stroop/skin-2026-11-28-interactivo-stroop.mp4"
+ },
+ {
+  "fecha": "2026-11-28",
+  "canal": "football",
+  "tipo": "sigue",
+  "tema": null,
+  "slug": "football-2026-11-28-interactivo-sigue",
+  "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/football/football-2026-11-28-interactivo-sigue/football-2026-11-28-interactivo-sigue.mp4"
+ },
+ {
+  "fecha": "2026-11-28",
+  "canal": "history",
+  "tipo": "encuentra",
+  "tema": null,
+  "slug": "history-2026-11-28-interactivo-encuentra",
+  "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/history/history-2026-11-28-interactivo-encuentra/history-2026-11-28-interactivo-encuentra.mp4"
+ },
+ {
+  "fecha": "2026-11-28",
+  "canal": "satisfy",
+  "tipo": "cuenta",
+  "tema": null,
+  "slug": "satisfy-2026-11-28-interactivo-cuenta",
+  "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/satisfy/satisfy-2026-11-28-interactivo-cuenta/satisfy-2026-11-28-interactivo-cuenta.mp4"
  }
 ]

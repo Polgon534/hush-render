@@ -208,5 +208,28 @@
     "paleta": "lima",
     "melodia": "gymnopedie",
     "fondo": "tinta"
+  },
+  {
+    "fecha": "2026-11-28",
+    "slug": "satisfy-2026-11-28-pinzas-joyas",
+    "mecanismo": "pinzas",
+    "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/satisfy/satisfy-2026-11-28-pinzas-joyas/satisfy-2026-11-28-pinzas-joyas.mp4",
+    "turno": 1,
+    "estilo2": true,
+    "paleta": "joyas",
+    "escala": "re_menor",
+    "pinzas": 2,
+    "fondo": "carbon"
+  },
+  {
+    "fecha": "2026-11-28",
+    "slug": "satisfy-2026-11-28-notas-para-elisa",
+    "mecanismo": "notas",
+    "mp4": "/home/runner/work/hush-render/hush-render/videos-finales/satisfy/satisfy-2026-11-28-notas-para-elisa/satisfy-2026-11-28-notas-para-elisa.mp4",
+    "turno": 2,
+    "estilo2": true,
+    "paleta": "hielo",
+    "melodia": "para_elisa",
+    "fondo": "azul"
   }
 ]
